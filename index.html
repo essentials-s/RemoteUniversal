@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#121212">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TV Remote">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <title>Универсальный пульт ДУ</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Верхняя панель -->
+        <div class="header">
+            <div class="logo">
+                <span class="icon">📺</span>
+                <h1>Универсальный пульт</h1>
+            </div>
+            <button id="scanBtn" class="btn-scan">🔍 Поиск</button>
+        </div>
+
+        <!-- Статус подключения -->
+        <div class="status-bar">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="statusText">Не подключено</span>
+            <span id="deviceName" class="device-name"></span>
+        </div>
+
+        <!-- Список устройств -->
+        <div class="devices-container" id="devicesContainer" style="display: none;">
+            <div class="devices-header">
+                <span>Найденные устройства</span>
+                <button id="closeDevicesBtn" class="close-btn">✕</button>
+            </div>
+            <div id="devicesList" class="devices-list"></div>
+        </div>
+
+        <!-- Основные кнопки -->
+        <div class="remote-grid">
+            <button class="btn power" data-command="POWER">⏻</button>
+            <button class="btn" data-command="VOLUME_UP">🔊 +</button>
+            <button class="btn" data-command="VOLUME_DOWN">🔊 -</button>
+            <button class="btn" data-command="MUTE">🔇</button>
+            
+            <button class="btn" data-command="CHANNEL_UP">CH ▲</button>
+            <button class="btn" data-command="CHANNEL_DOWN">CH ▼</button>
+            <button class="btn" data-command="MENU">📋</button>
+            <button class="btn" data-command="SOURCE">📡</button>
+            
+            <button class="btn" data-command="NUM_1">1</button>
+            <button class="btn" data-command="NUM_2">2</button>
+            <button class="btn" data-command="NUM_3">3</button>
+            <button class="btn" data-command="HOME">🏠</button>
+            
+            <button class="btn" data-command="NUM_4">4</button>
+            <button class="btn" data-command="NUM_5">5</button>
+            <button class="btn" data-command="NUM_6">6</button>
+            <button class="btn" data-command="BACK">↩</button>
+            
+            <button class="btn" data-command="NUM_7">7</button>
+            <button class="btn" data-command="NUM_8">8</button>
+            <button class="btn" data-command="NUM_9">9</button>
+            <button class="btn" data-command="EXIT">✖</button>
+            
+            <button class="btn" data-command="NUM_0">0</button>
+            <button class="btn ok" data-command="ENTER">OK</button>
+            <button class="btn" data-command="PLAY">▶</button>
+            <button class="btn" data-command="PAUSE">⏸</button>
+        </div>
+
+        <!-- Навигация -->
+        <div class="nav-grid">
+            <div></div>
+            <button class="nav-btn" data-command="UP">▲</button>
+            <div></div>
+            <button class="nav-btn" data-command="LEFT">◀</button>
+            <button class="nav-btn ok" data-command="ENTER">OK</button>
+            <button class="nav-btn" data-command="RIGHT">▶</button>
+            <div></div>
+            <button class="nav-btn" data-command="DOWN">▼</button>
+            <div></div>
+        </div>
+
+        <!-- Дополнительные функции -->
+        <div class="extra-grid">
+            <button id="keyboardBtn" class="btn extra">⌨️ Клавиатура</button>
+            <button id="mouseBtn" class="btn extra">🖱️ Мышь</button>
+            <button class="btn" data-command="STOP">⏹ Стоп</button>
+            <button id="settingsBtn" class="btn extra">⚙️</button>
+        </div>
+
+        <div class="footer">
+            <span>Телефон и ТВ в одной Wi-Fi сети</span>
+        </div>
+    </div>
+
+    <!-- Модальное окно добавления ТВ -->
+    <div id="addTvModal" class="modal">
+        <div class="modal-content">
+            <h3>Добавить телевизор</h3>
+            <input type="text" id="tvIp" placeholder="IP адрес (192.168.1.100)" autocomplete="off">
+            <input type="text" id="tvNameInput" placeholder="Название (опционально)">
+            <div class="modal-buttons">
+                <button id="confirmAddBtn" class="btn-primary">Добавить</button>
+                <button id="cancelModalBtn" class="btn-secondary">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно настроек -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <h3>Настройки</h3>
+            <label>
+                <input type="checkbox" id="vibrationToggle"> Вибрация при нажатии
+            </label>
+            <label>
+                <input type="checkbox" id="soundToggle"> Звук при нажатии
+            </label>
+            <label>
+                <input type="checkbox" id="autoConnectToggle"> Автоподключение
+            </label>
+            <div class="modal-buttons">
+                <button id="closeSettingsBtn" class="btn-primary">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Режим мыши -->
+    <div id="mouseOverlay" class="mouse-overlay" style="display: none;">
+        <div class="mouse-header">
+            <span>🖱️ Режим мыши</span>
+            <button id="exitMouseBtn">✕ Выход</button>
+        </div>
+        <div id="mousePad" class="mouse-pad">
+            <div class="mouse-instruction">
+                👆 Тап - левый клик<br>
+                ✌️ Два тапа - правый клик<br>
+                🖐️ Движение - курсор
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+  </html>
